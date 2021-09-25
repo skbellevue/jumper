@@ -27,7 +27,7 @@ You can then set breakpoints and perform step by step debugging, view your varia
 ### Requesting a hash
 `POST /hash`
 <br />
-**Example:** `curl -X —data “password=angryMonkey” http://localhost:8080/hash`
+**Example:** `curl -X POST —data “password=angryMonkey” http://localhost:8080/hash`
 #####  Discussion
 If the request succeeds, then you get a `202` status code, and the `Location` header will point to the url to obtain the formal hashed password (Example: `/hash/1`).
 The response body is a JSON structure with a single field, e.g `{"Id" : 1}`.
