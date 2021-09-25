@@ -32,6 +32,7 @@ type userPassword struct {
 }
 
 // Immediate response to hash requests
+// The assignment indicates the response to the request should be a number, but I think json is more suitable in this case
 type HashRequestIdentifier struct {
 	Id int `json:"id"`
 }
