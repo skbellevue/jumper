@@ -72,13 +72,13 @@ func (password *userPassword) beginHash(plainPassword string) {
 		stats.mutex.Lock()
 		defer stats.mutex.Unlock()
 
-		current := stats.Average * stats.Total
-		current += microseconds
-
+		// adjust our stats
+		current := (stats.Average * stats.Total) + microseconds
 		stats.Total += 1
 		stats.Average = current / stats.Total
 	})
 
+	// pause 5 seconds
 	timer := time.NewTimer(5 * time.Second)
 	<-timer.C
 
