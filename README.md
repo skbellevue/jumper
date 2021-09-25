@@ -17,6 +17,11 @@ I recommend Visual Studio Code to run and debug. VS Code can be downloaded at ht
 
 The test method will run tests against all the endpoints described below.
 
+## Debugging using VS Code
+Using Visual Studio Code, open the root folder to view the project.
+I have included a launch.json file. Just use the debugger and run the configuration named `Launch File`.
+You can then set breakpoints and perform step by step debugging, view your variables, etc.
+
 
 ## The REST API
 ### Requesting a hash
