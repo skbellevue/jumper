@@ -26,6 +26,7 @@ You can then set breakpoints and perform step by step debugging, view your varia
 ## The REST API
 ### Requesting a hash
 `POST /hash`
+<br />
 **Example:** `curl -X —data “password=angryMonkey” http://localhost:8080/hash`
 #####  Discussion
 If the request succeeds, then you get a `202` status code, and the `Location` header will point to the url to obtain the formal hashed password (Example: `/hash/1`).
@@ -34,6 +35,7 @@ You can query the formal hash using that Id
 
 ### Getting the hashed string
 `GET /hash/:id`
+<br />
 **Example:** `curl http://localhost:8080/hash/12` 
 #####  Discussion
 If the initial request is not fulflled yet, then this call will return a `202` status code.
@@ -42,6 +44,8 @@ If the initial request is fulfilled, then you get a `200` status code, and the r
 
 ### Statistics
 `GET /stats`
+<br />
+
 **Example:** `curl http://localhost:8080/stats` 
 
 #####  Discussion
