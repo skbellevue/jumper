@@ -17,8 +17,7 @@ import (
 	"time"
 )
 
-type Route string
-
+// Routes
 const HashRequestRoute = "/hash"
 const HashResultRoute = "/hash/([^/]+)"
 const StatsRoute = "/stats"
@@ -55,12 +54,17 @@ var stats = HashStats{
 	Total:   0,
 	Average: 0,
 }
+
+// Initialize our index provider
 var indexProvider = HashRequestIndexProvider{index: 0}
 
+// General purpose function to clock methods.
+// Usage: defer timeTracker(fromTime, func(microseconds int64) { doSomething() })
 func timeTracker(start time.Time, callback func(microseconds int64)) {
 	callback(time.Since(start).Microseconds())
 }
 
+// Password hasher method
 func (password *userPassword) beginHash(plainPassword string) {
 	// track the time for this request
 	defer timeTracker(time.Now(), func(microseconds int64) {
@@ -88,6 +92,7 @@ func (password *userPassword) beginHash(plainPassword string) {
 	log.Printf(" -----> hash is %s", sha)
 }
 
+// General purpose http method handler
 func methodHandler(acceptedMethod string, h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if acceptedMethod != r.Method {
@@ -101,6 +106,7 @@ func methodHandler(acceptedMethod string, h http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// Handler for hash requests
 func handleHashRequest(w http.ResponseWriter, r *http.Request) {
 	if err := r.ParseForm(); err != nil {
 		fmt.Fprintf(w, "ParseForm() err: %v", err)
@@ -135,6 +141,7 @@ func handleHashRequest(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
+// Handler for stats
 func getStats(w http.ResponseWriter, r *http.Request) {
 	respBody, err := json.Marshal(&stats)
 	if err != nil {
@@ -149,6 +156,7 @@ func getStats(w http.ResponseWriter, r *http.Request) {
 	w.Write(respBody)
 }
 
+// Handler for hash results
 func getHashedPassword(id int, w http.ResponseWriter) {
 	// Lookup request by id
 	entry := hashRequestsCache[id]
@@ -174,6 +182,7 @@ func getHashedPassword(id int, w http.ResponseWriter) {
 	w.Write([]byte(entry.hashedValue))
 }
 
+// Regex matcher for our supported routes
 func match(path, pattern string, vars ...interface{}) bool {
 	regex := regexp.MustCompile("^" + pattern + "$")
 	matches := regex.FindStringSubmatch(path)
@@ -197,6 +206,7 @@ func match(path, pattern string, vars ...interface{}) bool {
 	return true
 }
 
+// Main server function
 func server(w http.ResponseWriter, r *http.Request) {
 	// Handle graceful exit
 	defer wg.Done()
@@ -230,10 +240,13 @@ func server(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// Create server
 	app := &http.Server{
 		Addr:    ":8080",
 		Handler: http.HandlerFunc(server),
 	}
+
+	// Handle graceful exit
 	termChan := make(chan os.Signal)
 	signal.Notify(termChan, syscall.SIGTERM, syscall.SIGINT)
 
@@ -243,8 +256,10 @@ func main() {
 		app.Shutdown(context.Background())
 	}()
 
+	// Start server
 	log.Fatal(app.ListenAndServe())
 
+	// Wait for pending tasks completion
 	log.Println("Waiting for pending requests to complete...")
 	wg.Wait()
 	log.Println("jobs finished. exiting")
